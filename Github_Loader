@@ -333,9 +333,6 @@ exitBtn.MouseButton1Click:Connect(function()
 	pcall(function() keyGui:Destroy() end)
 end)
 
-		loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
-	end)
-
 	getKeyBtn.MouseButton1Click:Connect(function()
 		local url = "https://ads.luarmor.net/get_key?for=Tyr_Scripts-lgYCBLmYNbSY"
 		if copyText(url) then
