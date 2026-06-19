@@ -13,6 +13,8 @@
 	-- Used only by the pre-auth key checker so invalid keys do not let
 	-- Luarmor continue and kick the player. This is the 32-char script id
 	-- from the Luarmor loader URL / script page.
+	local TYR_LUARMOR_SCRIPT_ID = "51f2550d27b3bdbbb34a8b3adf74e0e6"
+	local TYR_LUARMOR_KEYCHECK_SDK = "https://sdkapi-public.luarmor.net/library.lua"
 
 	local done = false
 
@@ -302,37 +304,116 @@
 
 	local keyCheckBusy = false
 
-	local function submitKey()
-	if keyCheckBusy then return end
-	local key = tostring(keyInput.Text or ""):gsub("^%s+", ""):gsub("%s+$", "")
-	if key == "" then
-		setStatus("Please enter a key.", Color3.fromRGB(255, 185, 120))
-		return
+	local function preauthHttpGet(url)
+		local req
+		pcall(function()
+			req = (type(request) == "function" and request)
+				or (type(http_request) == "function" and http_request)
+				or (syn and type(syn.request) == "function" and syn.request)
+				or (http and type(http.request) == "function" and http.request)
+		end)
+
+		if type(req) == "function" then
+			local ok, res = pcall(req, { Url = url, Method = "GET" })
+			if ok and type(res) == "table" then
+				local body = res.Body or res.body
+				if type(body) == "string" and body ~= "" then
+					return body
+				end
+			elseif ok and type(res) == "string" and res ~= "" then
+				return res
+			end
+		end
+
+		local ok, body = pcall(function()
+			local fn = game["HttpGet"]
+			if type(fn) == "function" then
+				return fn(game, url, true)
+			end
+		end)
+		if ok and type(body) == "string" and body ~= "" then
+			return body
+		end
+		return nil
 	end
 
-	keyCheckBusy = true
-	setStatus("Loading...", Color3.fromRGB(140, 225, 150))
+	local function checkLuarmorKeyBeforeAuth(key)
+		if type(TYR_LUARMOR_SCRIPT_ID) ~= "string" or TYR_LUARMOR_SCRIPT_ID == "" or TYR_LUARMOR_SCRIPT_ID:find("PASTE") then
+			return false, "Script ID is missing. Contact staff."
+		end
 
-	saveKeyToDisk(key)
+		local sdkSource = preauthHttpGet(TYR_LUARMOR_KEYCHECK_SDK)
+		if type(sdkSource) ~= "string" or sdkSource == "" then
+			return false, "Could not load key checker. Try again or contact staff."
+		end
 
-	script_key = key
-	pcall(function() _G.script_key = key end)
+		local okLoad, api = pcall(function()
+			return loadstring(sdkSource)()
+		end)
+		if not okLoad or type(api) ~= "table" then
+			return false, "Could not start key checker. Try again or contact staff."
+		end
 
-	local env = safeGetGenv()
-	if env then env.script_key = key end
+		api.script_id = TYR_LUARMOR_SCRIPT_ID
+		local okCheck, status = pcall(function()
+			return api.check_key(key)
+		end)
+		if not okCheck or type(status) ~= "table" then
+			return false, "Could not verify key. Try again or contact staff."
+		end
 
-	if task and task.wait then task.wait(0.15) else wait(0.15) end
+		local code = tostring(status.code or "")
+		if code == "KEY_VALID" then
+			return true
+		elseif code == "KEY_HWID_LOCKED" then
+			return false, "This key is linked to another HWID. Reset HWID first."
+		elseif code == "KEY_EXPIRED" then
+			return false, "This key is expired."
+		elseif code == "KEY_BANNED" then
+			return false, "This key is blacklisted."
+		elseif code == "KEY_INCORRECT" or code == "KEY_INVALID" then
+			return false, "Invalid key. Please check it and try again."
+		else
+			return false, tostring(status.message or "Key check failed.")
+		end
+	end
 
-	done = true
-	pcall(function() keyGui:Destroy() end)
+	local function submitKey()
+		if keyCheckBusy then return end
+		local key = tostring(keyInput.Text or ""):gsub("^%s+", ""):gsub("%s+$", "")
+		if key == "" then
+			setStatus("Please enter a key.", Color3.fromRGB(255, 185, 120))
+			return
+		end
 
-	loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
-end
+		keyCheckBusy = true
+		setStatus("Checking key...", Color3.fromRGB(210, 210, 215))
 
-exitBtn.MouseButton1Click:Connect(function()
-	done = true
-	pcall(function() keyGui:Destroy() end)
-end)
+		local okKey, message = checkLuarmorKeyBeforeAuth(key)
+		if not okKey then
+			keyCheckBusy = false
+			setStatus(message or "Invalid key.", Color3.fromRGB(255, 130, 130))
+			return
+		end
+
+		saveKeyToDisk(key)
+		script_key = key
+		pcall(function() _G.script_key = key end)
+		local env = safeGetGenv()
+		if env then env.script_key = key end
+		if task and task.wait then task.wait(0.15) else wait(0.15) end
+		done = true
+		pcall(function() keyGui:Destroy() end)
+
+		loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
+	end
+
+	exitBtn.MouseButton1Click:Connect(function()
+		done = true
+		pcall(function() keyGui:Destroy() end)
+
+		loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
+	end)
 
 	getKeyBtn.MouseButton1Click:Connect(function()
 		local url = "https://ads.luarmor.net/get_key?for=Tyr_Scripts-lgYCBLmYNbSY"
