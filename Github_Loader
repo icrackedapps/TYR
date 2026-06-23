@@ -333,7 +333,6 @@
 	
 		done = true
 		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
-		task.wait(3)
 		pcall(function()
 			keyGui:Destroy()
 		end)
