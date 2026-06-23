@@ -396,9 +396,6 @@
 			return
 		end
 
-		-- Key authenticated successfully
-		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
-
 		saveKeyToDisk(key)
 		script_key = key
 		pcall(function() _G.script_key = key end)
