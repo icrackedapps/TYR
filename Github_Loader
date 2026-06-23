@@ -397,15 +397,7 @@
 			return
 		end
 
-		-- Key authenticated successfully
-		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
-
-		if task and task.wait then
-			task.wait(3)
-		else
-			wait(3)
-		end
-
+		-- Save the key immediately
 		saveKeyToDisk(key)
 
 		script_key = key
@@ -418,17 +410,30 @@
 			env.script_key = key
 		end
 
-		done = true
-		pcall(function()
-			keyGui:Destroy()
-		end)
+		-- Show success message
+		keyCheckBusy = false
+		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
 
-		loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
+		-- Delay loading so the user sees the message
+		task.spawn(function()
+			task.wait(3)
+
+			done = true
+			pcall(function()
+				keyGui:Destroy()
+			end)
+
+			loadstring(game:HttpGet(
+				"https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"
+			))()
+		end)
 	end
 
 	exitBtn.MouseButton1Click:Connect(function()
 		done = true
-		pcall(function() keyGui:Destroy() end)
+		pcall(function()
+			keyGui:Destroy()
+		end)
 	end)
 
 	getKeyBtn.MouseButton1Click:Connect(function()
