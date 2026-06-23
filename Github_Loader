@@ -320,9 +320,6 @@
 			return
 		end
 	
-		-- Show success message
-		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
-	
 		saveKeyToDisk(key)
 		script_key = key
 		pcall(function()
@@ -334,9 +331,9 @@
 			env.script_key = key
 		end
 	
-		task.wait(0.15)
-	
 		done = true
+		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
+		task.wait(3)
 		pcall(function()
 			keyGui:Destroy()
 		end)
