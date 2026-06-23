@@ -313,9 +313,6 @@
 		keyCheckBusy = true
 		setStatus("Checking key...", Color3.fromRGB(210,210,215))
 
-		-- Check the key for 3 seconds
-		task.wait(3)
-
 		-- Save the key
 		saveKeyToDisk(key)
 		script_key = key
@@ -328,8 +325,8 @@
 			env.script_key = key
 		end
 	
-		-- Give Luarmor a moment to authenticate
-		task.wait(0.15)
+		-- Give Luarmor a moment to authenticate the key
+		task.wait(3)
 	
 		-- Show success message
 		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140,225,150))
