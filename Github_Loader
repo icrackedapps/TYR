@@ -301,7 +301,7 @@
 
 	local keyCheckBusy = false
 
-	local TYR_LUARMOR_SCRIPT_ID = "82fb213ab46c0146839c0da2e5f4f449"
+	local TYR_LUARMOR_SCRIPT_ID = "b13e6b4d8d5fdd59622f52c5a6bc3912"
 	local TYR_LUARMOR_KEYCHECK_SDK = "https://sdkapi-public.luarmor.net/library.lua"
 
 	local function preauthHttpGet(url)
