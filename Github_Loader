@@ -314,7 +314,7 @@
 		setStatus("Checking key...", Color3.fromRGB(210,210,215))
 
 		-- Check the key for 2 seconds
-		task.wait(0.2)
+		task.wait(2)
 
 		-- Save the key
 		saveKeyToDisk(key)
