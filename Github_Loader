@@ -311,19 +311,27 @@
 		end
 	
 		keyCheckBusy = true
-		setStatus("Loading...", Color3.fromRGB(140,225,150))
+		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140,225,150))
 	
 		saveKeyToDisk(key)
 		script_key = key
-		pcall(function() _G.script_key = key end)
+		pcall(function()
+			_G.script_key = key
+		end)
 	
 		local env = safeGetGenv()
-		if env then env.script_key = key end
+		if env then
+			env.script_key = key
+		end
 	
-		if task and task.wait then task.wait(0.15) else wait(0.15) end
+		if task and task.wait then
+			task.wait(0.15)
+		end
 	
 		done = true
-		pcall(function() keyGui:Destroy() end)
+		pcall(function()
+			keyGui:Destroy()
+		end)
 	
 		loadstring(game:HttpGet("https://api.luarmor.net/files/v4/loaders/b13e6b4d8d5fdd59622f52c5a6bc3912.lua"))()
 	end
