@@ -311,7 +311,7 @@
 		end
 	
 		keyCheckBusy = true
-		setStatus("Checking key...", Color3.fromRGB(210,210,215))
+		setStatus("Loading Tyr Scripts...", Color3.fromRGB(140,225,150))
 
 		-- Save the key
 		saveKeyToDisk(key)
@@ -326,13 +326,13 @@
 		end
 	
 		-- Give Luarmor a moment to authenticate the key
-		task.wait(3)
+		task.wait(1.5)
 	
 		-- Show success message
-		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140,225,150))
+		setStatus("Initializing Tyr Scripts...", Color3.fromRGB(140,225,150))
 	
-		-- Keep it visible for 3 seconds
-		task.wait(3)
+		-- Keep it visible for 2 seconds
+		task.wait(2)
 	
 		done = true
 		pcall(function()
