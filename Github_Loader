@@ -334,7 +334,11 @@
 			env.script_key = key
 		end
 	
-		task.wait(0.15)
+		if task and type(task.wait) == "function" then
+			task.wait(0.15)
+		elseif wait then
+			wait(0.15)
+		end
 	
 		done = true
 		pcall(function()
