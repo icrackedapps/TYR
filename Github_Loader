@@ -323,9 +323,6 @@
 		-- Show success message
 		setStatus("✓ Key authenticated. Loading Tyr Scripts...", Color3.fromRGB(140, 225, 150))
 	
-		-- Give the UI one frame to update
-		task.wait()
-	
 		saveKeyToDisk(key)
 		script_key = key
 		pcall(function()
@@ -337,12 +334,7 @@
 			env.script_key = key
 		end
 	
-		-- Optional: increase this to 1 or 2 seconds if you want the message visible longer
-		if task and task.wait then
-			task.wait(0.15)
-		else
-			wait(0.15)
-		end
+		task.wait(0.15)
 	
 		done = true
 		pcall(function()
