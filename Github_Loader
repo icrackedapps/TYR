@@ -313,8 +313,8 @@
 		keyCheckBusy = true
 		setStatus("Checking key...", Color3.fromRGB(210,210,215))
 
-		-- Check the key for 2 seconds
-		task.wait(2)
+		-- Check the key for 3 seconds
+		task.wait(3)
 
 		-- Save the key
 		saveKeyToDisk(key)
